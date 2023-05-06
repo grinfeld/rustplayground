@@ -1,4 +1,3 @@
-use std::cell::Ref;
 use std::collections::HashMap;
 
 pub struct Node {
@@ -35,11 +34,18 @@ impl Node {
         }
     }
 
-    pub fn get_next(self, word: String) -> Option<&'static Node> {
+    pub fn get_next(self, word: String) -> Option<Node> {
         match self.nexts {
             Some(map) => {
                 if map.contains_key(word.as_str()) {
-                        map.get(word.as_str())
+                        match map.get(word.as_str()) {
+                            Some(n) => {
+                                let mut node = &*n;
+                                //Some(node)
+                                None
+                            },
+                            None => None
+                        }
                 } else {
                     return None
                 }
