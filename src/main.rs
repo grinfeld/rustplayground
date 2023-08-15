@@ -1,5 +1,5 @@
 mod stack;
 
 fn main() {
-    stack::main();
+    stack::test_reverse();
 }
