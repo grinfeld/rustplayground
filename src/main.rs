@@ -1,12 +1,23 @@
 mod stack;
 use std::collections::HashSet;
+use std::collections::HashMap;
 
 fn main() {
     // stack::test_reverse();
+    let ops_map : HashMap<char, Element> = HashMap::from([
+        (PLUS_SIGN, PLUS),
+        (MINUS_SIGN, MINUS),
+        (MUL_SIGN, MUL),
+        (DIV_SIGN, DIV),
+        (POW_SIGN, POW),
+        (OPEN_BRACKET_SIGN, OPEN_BRACKET),
+        (CLOSE_BRACKET_SIGN, CLOSE_BRACKET)
+    ]);
 
-    let ops : HashSet<Element> = HashSet::from([PLUS, MINUS, MUL, DIV, POW, OPEN_BRACKET, CLOSE_BRACKET]);
-    let op_chars: HashSet<char> = HashSet::from(['+', '-', '*', '/', '(', ')', '^']);
-    let ns = String::from("(33 + 45 / 3 *(2+9)-50)".trim());
+    let ops : HashSet<Element> = ops_map.values().copied().collect();
+    let op_chars: HashSet<char> = ops_map.keys().copied().collect();
+
+    let ns = String::from("33 + 45 / 3 *(2+9)-50".trim());
     let mut operators: Vec<Element> = stack::new_stack(ns.len());
     let mut numbers: Vec<Element> = stack::new_stack(ns.len());
 
@@ -25,7 +36,7 @@ fn main() {
                 num = String::from("");
                 numbers.push(Element::Number(n));
             }
-            let op : Element = Element::Operation(c);
+            let op : Element = *ops_map.get(&c).unwrap();
             if ops.contains(&prev_op) {
                 operators.push(prev_op);
             }
@@ -50,6 +61,8 @@ fn main() {
     }
     //set(&mut operators, prev_op, Element::Number(num.parse().unwrap()), prev_op);
 
+    print!("{}", ns);
+    println!();
     stack::print_stack(&operators, |op: &Element| op.to_string());
     stack::print_stack(&numbers, |op: &Element| op.to_string());
 }
@@ -64,20 +77,36 @@ impl Element {
     fn to_string(&self) -> String {
         match self {
             Element::Number(n) => n.to_string(),
-            Element::Operation { character, order} => character.to_string() + "(" + &order.to_string() + ")"
+            Element::Operation { character, order} => character.to_string()// + "[" + &order.to_string() + "]"
         }
     }
 }
 
+// 33 + 45 / 3 *(2+9)-50
+
+
 
 const EMPTY_CHAR: char = '\0';
 
-const PLUS : Element =  Element::Operation{character: '+', order: 0};
-const MINUS : Element =  Element::Operation{character: '-', order: 0};
-const MUL : Element =  Element::Operation{character: '*', order: 1};
-const DIV : Element =  Element::Operation{character: '/', order: 1};
-const POW : Element =  Element::Operation{character: '^', order: 2};
-const OPEN_BRACKET : Element =  Element::Operation{character: '(', order: 3};
-const CLOSE_BRACKET : Element =  Element::Operation{character: ')', order: 3};
+const PLUS_SIGN : char = '+';
+const PLUS : Element =  Element::Operation{character: PLUS_SIGN, order: 0};
+
+const MINUS_SIGN : char = '-';
+const MINUS : Element =  Element::Operation{character: MINUS_SIGN, order: 0};
+
+const MUL_SIGN : char = '*';
+const MUL : Element =  Element::Operation{character: MUL_SIGN, order: 1};
+
+const DIV_SIGN : char = '/';
+const DIV : Element =  Element::Operation{character: DIV_SIGN, order: 1};
+
+const POW_SIGN : char = '^';
+const POW : Element =  Element::Operation{character: POW_SIGN, order: 2};
+
+const OPEN_BRACKET_SIGN : char = '(';
+const OPEN_BRACKET : Element =  Element::Operation{character: OPEN_BRACKET_SIGN, order: 3};
+
+const CLOSE_BRACKET_SIGN : char = ')';
+const CLOSE_BRACKET : Element =  Element::Operation{character: CLOSE_BRACKET_SIGN, order: 3};
 
 const EMPTY_OP: Element =  Element::Operation{character: EMPTY_CHAR, order: -1};
