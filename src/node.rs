@@ -46,7 +46,7 @@ impl<T> Node<T> where T: Clone {
         }
         v
     }
-    
+
     pub fn remove_first(&mut self) -> Option<T> {
         let c = self.value.take();
         if !self.has_next() {
@@ -95,56 +95,3 @@ impl<'a, T> IntoIterator for &'a Node<T> where T: Clone {
         self.iter()
     }
 }
-
-// #[derive(Debug, Clone)]
-// pub struct NonEmpty<T> where T: Clone {
-//     value: Option<T>,
-//     next: Option<Box<NonEmpty<T>>>,
-// }
-//
-// pub struct NodeIter<'a, T> where T: Clone {
-//     current: Option<&'a NonEmpty<T>>
-// }
-//
-// impl<'a, T> Iterator for NodeIter<'a, T> where T: Clone {
-//     type Item = Option<&'a T>;
-//
-//     fn next(&mut self) -> Option<Self::Item> {
-//         let node: &NonEmpty<T> = self.current?;
-//         self.current = node.next.as_deref();
-//         Some(node.value.as_ref())
-//     }
-// }
-//
-// impl<'a, T> IntoIterator for &'a NonEmpty<T> where T: Clone {
-//     type Item = Option<&'a T>;
-//     type IntoIter = NodeIter<'a, T>;
-//
-//     fn into_iter(self) -> Self::IntoIter {
-//         self.iter()
-//     }
-// }
-//
-// impl<T> NonEmpty<T> where T: Clone {
-//     pub fn new(value: T) -> NonEmpty<T> {
-//         NonEmpty {
-//             value: Some(value),
-//             next: None,
-//         }
-//     }
-//
-//     pub fn push(mut self, value: T) -> Box<NonEmpty<T>> {
-//         let new_node = NonEmpty {
-//             value: Some(value),
-//             next: None,
-//         };
-//         self.next = Some(Box::new(new_node));
-//         Box::clone(&self.next.unwrap())
-//     }
-//
-//     pub fn iter(&self) -> NodeIter<'_, T> {
-//         NodeIter {
-//             current: Some(self)
-//         }
-//     }
-// }
