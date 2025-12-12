@@ -1,4 +1,6 @@
 mod stack;
+mod node;
+
 use std::collections::HashSet;
 use std::collections::HashMap;
 
