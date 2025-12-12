@@ -39,6 +39,14 @@ impl<T> Node<T> where T: Clone {
         }
     }
 
+    pub fn to_vec(&self) -> Vec<&T> {
+        let mut v: Vec<&T> = vec![];
+        for c in self.iter() {
+            v.push(c.unwrap())
+        }
+        v
+    }
+    
     pub fn remove_first(&mut self) -> Option<T> {
         let c = self.value.take();
         if !self.has_next() {
