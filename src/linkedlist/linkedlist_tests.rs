@@ -15,4 +15,12 @@ fn test_linkedlist() {
     for v in l1.into_iter() {
         println!("{:?}", v)
     }
+
+    l1.remove_first();
+    assert_eq!(l1.size, 1);
+
+    println!("After remove");
+    for v in l1.into_iter() {
+        println!("{:?}", v)
+    }
 }
