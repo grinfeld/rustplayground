@@ -57,7 +57,7 @@ impl<T: Clone> LinkedList<T> {
                 self.head = node.next;
                 node.value
             }
-            Err(shared_rc) => {
+            Err(_) => {
                 panic!("Some one holding the node");
             }
         };
