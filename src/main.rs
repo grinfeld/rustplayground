@@ -1,7 +1,8 @@
 mod stack;
 mod node;
+mod linkedlist;
 
-use std::collections::HashSet;
+use std::collections::{HashSet, LinkedList};
 use std::collections::HashMap;
 
 fn main() {
