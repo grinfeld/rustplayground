@@ -49,17 +49,16 @@ impl<T> LinkedList<T> {
     pub fn remove_first(&mut self) -> Option<T> {
         let guard = self.locker.lock().unwrap();
         let head_rc = self.head.take()?;
-        let v = match Rc::try_unwrap(head_rc) {
+        match Rc::try_unwrap(head_rc) {
             Ok(node) => {
                 self.head = node.next;
+                self.size -= 1;
                 node.value
             }
             Err(_) => {
                 panic!("Some one holding the node");
             }
-        };
-        self.size -= 1;
-        v
+        }
     }
 }
 
