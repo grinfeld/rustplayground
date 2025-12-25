@@ -1,6 +1,7 @@
 mod stack;
 mod node;
 mod linkedlist;
+mod safelinkedlist;
 
 use std::collections::{HashSet, LinkedList};
 use std::collections::HashMap;
