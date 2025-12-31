@@ -1,67 +1,44 @@
 
 use std::sync::Mutex;
-use std::rc::Rc;
+use crate::linkedlist::LinkedList;
 
 mod safelinkedlist_tests;
 
-#[derive(Debug)]
-struct Node<T> {
-    value: Option<T>,
-    next: Option<Rc<Node<T>>>
+
+pub struct LinkedListThreadSafe<T: Clone> {
+    inner: Mutex<LinkedList<T>>
 }
 
-#[derive(Debug)]
-pub struct LinkedList<T> {
-    head: Option<Rc<Node<T>>>,
-    size: usize,
-    locker: Mutex<bool>
-}
-
-impl<T> LinkedList<T> {
+impl<T: Clone> LinkedListThreadSafe<T> {
     pub fn new() -> Self {
-        LinkedList {
-            head: None,
-            size: 0,
-            locker: Mutex::new(false)
+        LinkedListThreadSafe {
+            inner: Mutex::new(LinkedList::new())
         }
     }
 
+    pub fn size(&self) -> usize {
+        self.inner.lock().unwrap().size()
+    }
+    
     pub fn is_empty(&self) -> bool {
-        self.size == 0
+        self.inner.lock().unwrap().is_empty()
     }
 
-    pub fn push_front(&mut self, value: T)  {
-        let guard = self.locker.lock().unwrap();
-        if self.is_empty() {
-            self.head = Some(Rc::new(Node {
-                value: Some(value),
-                next: None
-            }));
-        } else {
-            self.head = Some(Rc::new(Node {
-                value: Some(value),
-                next: Some(Rc::clone(&self.head.take().unwrap()))
-            }));
-        }
-        self.size = self.size + 1;
+    pub fn push_front(&self, value: T) {
+        let mut guard = self.inner.lock().unwrap();
+        guard.push_front(value);
     }
 
-    pub fn remove_first(&mut self) -> Option<T> {
-        let guard = self.locker.lock().unwrap();
-        let head_rc = self.head.take()?;
-        match Rc::try_unwrap(head_rc) {
-            Ok(node) => {
-                self.head = node.next;
-                self.size -= 1;
-                node.value
-            }
-            Err(_) => {
-                panic!("Some one holding the node");
-            }
-        }
+    pub fn remove_first(&self) -> Option<T> {
+        let mut guard = self.inner.lock().unwrap();
+        guard.remove_first()
+    }
+    
+    pub fn peek_head(&self) -> Option<T> {
+        self.inner.lock().unwrap().get_value()
     }
 }
-
+/*
 pub struct Iter<'a, T>  {
     current: Option<&'a Node<T>>,
 }
@@ -80,11 +57,13 @@ impl<'a, T> Iterator for Iter<'a, T>  {
     }
 }
 
-impl<'a, T> IntoIterator for &'a LinkedList<T> {
+impl<'a, T> IntoIterator for &'a LinkedListState<T> {
     type Item = &'a T;
     type IntoIter = Iter<'a, T>;
 
     fn into_iter(self) -> Self::IntoIter {
+        let guard = self.locker.lock().unwrap();
         Iter { current: self.head.as_deref() }
     }
 }
+*/

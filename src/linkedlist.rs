@@ -1,17 +1,17 @@
 
-use std::rc::Rc;
+use std::sync::Arc;
 
 mod linkedlist_tests;
 
 #[derive(Debug, Clone)]
 struct Node<T: Clone> {
     value: Option<T>,
-    next: Option<Rc<Node<T>>>
+    next: Option<Arc<Node<T>>>
 }
 
 #[derive(Debug, Clone)]
 pub struct LinkedList<T: Clone> {
-    head: Option<Rc<Node<T>>>,
+    head: Option<Arc<Node<T>>>,
     size: usize
 }
 
@@ -21,6 +21,10 @@ impl<T: Clone> LinkedList<T> {
             head: None,
             size: 0
         }
+    }
+
+    pub fn size(&self) -> usize {
+        self.size
     }
 
     pub fn get_value(&self) -> Option<T> {
@@ -36,14 +40,14 @@ impl<T: Clone> LinkedList<T> {
 
     pub fn push_front(&mut self, value: T) -> &mut Self {
         if self.is_empty() {
-            self.head = Some(Rc::new(Node {
+            self.head = Some(Arc::new(Node {
                 value: Some(value),
                 next: None
             }));
         } else {
-            self.head = Some(Rc::new(Node {
+            self.head = Some(Arc::new(Node {
                 value: Some(value),
-                next: Some(Rc::clone(&self.head.take().unwrap()))
+                next: self.head.as_ref().map(|h| Arc::clone(h))
             }));
         }
         self.size = self.size + 1;
@@ -52,7 +56,7 @@ impl<T: Clone> LinkedList<T> {
 
     pub fn remove_first(&mut self) -> Option<T> {
         let head_rc = self.head.take()?;
-        match Rc::try_unwrap(head_rc) {
+        match Arc::try_unwrap(head_rc) {
             Ok(node) => {
                 self.head = node.next;
                 self.size -= 1;
