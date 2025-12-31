@@ -48,32 +48,3 @@ impl<T: Clone> LinkedListThreadSafe<T> {
         }
     }
 }
-/*
-pub struct Iter<'a, T>  {
-    current: Option<&'a Node<T>>,
-}
-
-impl<'a, T> Iterator for Iter<'a, T>  {
-    type Item = &'a T;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        match self.current {
-            None => None,
-            Some(n) => {
-                self.current = n.next.as_deref();
-                n.value.as_ref()
-            }
-        }
-    }
-}
-
-impl<'a, T> IntoIterator for &'a LinkedListState<T> {
-    type Item = &'a T;
-    type IntoIter = Iter<'a, T>;
-
-    fn into_iter(self) -> Self::IntoIter {
-        let guard = self.locker.lock().unwrap();
-        Iter { current: self.head.as_deref() }
-    }
-}
-*/
