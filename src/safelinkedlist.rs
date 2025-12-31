@@ -37,6 +37,16 @@ impl<T: Clone> LinkedListThreadSafe<T> {
     pub fn peek_head(&self) -> Option<T> {
         self.inner.lock().unwrap().get_value()
     }
+
+    pub fn for_each<F>(&self, mut f: F)
+    where
+        F: FnMut(&T),
+    {
+        let guard = self.inner.lock().unwrap();
+        for v in guard.into_iter() {
+            f(v);
+        }
+    }
 }
 /*
 pub struct Iter<'a, T>  {

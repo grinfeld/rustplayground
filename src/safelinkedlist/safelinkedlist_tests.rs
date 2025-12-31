@@ -14,17 +14,13 @@ fn test_linkedlist() {
     assert_eq!(ll.size(), 2);
     assert!(!ll.is_empty());
 
-    // for v in ll.into_iter() {
-    //     println!("{:?}", v)
-    // }
+    ll.for_each(|v| println!("{:?}", v));
 
     ll.remove_first();
     assert_eq!(ll.size(), 1);
 
-    /*println!("After remove");
-    for v in ll.into_iter() {
-        println!("{:?}", v)
-    }*/
+    println!("After remove");
+    ll.for_each(|v| println!("{:?}", v));
 }
 
 #[test]
@@ -38,9 +34,16 @@ fn test_linkedlist_threads() {
             list_clone.push_front(i * 10);
         });
         handle.join().unwrap();
-        print!("{:?}", shared_list.peek_head().unwrap());
-        assert_eq!(shared_list.size(), 10);
     }
+    assert_eq!(shared_list.size(), 10);
+    shared_list.for_each(|v| println!("{:?}", v));
 
-
+    for i in 0..3 {
+        let mut list_clone = Arc::clone(&shared_list);
+        let handle = std::thread::spawn(move || {
+            list_clone.remove_first();
+        });
+        handle.join().unwrap();
+    }
+    assert_eq!(shared_list.size(), 7);
 }
