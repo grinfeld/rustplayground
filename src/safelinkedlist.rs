@@ -42,8 +42,12 @@ impl<T: Clone> LinkedListThreadSafe<T> {
     where
         F: FnMut(&T),
     {
-        let guard = self.inner.lock().unwrap();
-        for v in guard.into_iter() {
+        let list_snapshot = {
+            let guard = self.inner.lock().unwrap();
+            // cloning the lock to avoid locking the whole list for a long time
+            guard.clone()
+        };
+        for v in &list_snapshot {
             f(v);
         }
     }
