@@ -38,6 +38,11 @@ impl<T: Clone> LinkedListThreadSafe<T> {
         self.inner.read().unwrap().get_value()
     }
 
+    pub fn to_vec(&self) -> Vec<T> {
+        let guard = self.inner.read().unwrap();
+        guard.into_iter().cloned().collect()
+    }
+
     pub fn for_each<F>(&self, mut f: F)
     where
         F: FnMut(&T),
