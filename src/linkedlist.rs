@@ -23,10 +23,12 @@ impl<T: Clone> LinkedList<T> {
         }
     }
 
+    #[inline]
     pub fn size(&self) -> usize {
         self.size
     }
 
+    #[inline]
     pub fn get_value(&self) -> Option<T> {
         match &self.head {
             None => None,
@@ -34,6 +36,7 @@ impl<T: Clone> LinkedList<T> {
         }
     }
 
+    #[inline]
     pub fn is_empty(&self) -> bool {
         self.size == 0
     }
