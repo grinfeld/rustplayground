@@ -31,19 +31,15 @@ fn test_linkedlist_threads() {
     for i in 0..10 {
         let mut list_clone = Arc::clone(&shared_list);
         let handle = std::thread::spawn(move || {
-            list_clone.push_front(i * 10);
+            // inserted only 7 elements and removed 3
+            if i > 0 && i % 3 == 0 {
+                list_clone.remove_first();
+            } else {
+                list_clone.push_front(i * 10);
+            }
         });
         handle.join().unwrap();
     }
-    assert_eq!(shared_list.size(), 10);
+    assert_eq!(shared_list.size(), 4);
     shared_list.for_each(|v| println!("{:?}", v));
-
-    for i in 0..3 {
-        let mut list_clone = Arc::clone(&shared_list);
-        let handle = std::thread::spawn(move || {
-            list_clone.remove_first();
-        });
-        handle.join().unwrap();
-    }
-    assert_eq!(shared_list.size(), 7);
 }
